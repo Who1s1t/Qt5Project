@@ -16,7 +16,7 @@ class App(QWidget, Ui_App):
         self.set()
         self.check_connection()
 
-    def create_db(self):
+    def create_db(self):  # Создаём таблицу при её отсутствие и обновляем её
         self.cur.execute(
             """CREATE TABLE IF NOT EXISTS course (
                         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -28,7 +28,7 @@ class App(QWidget, Ui_App):
         if self.check_connection():
             self.update_db()
 
-    def check_connection(self):
+    def check_connection(self):  # Проверяем подключение к интернету
         try:
             requests.get('https://www.google.ru')
             return 1
@@ -52,14 +52,14 @@ class App(QWidget, Ui_App):
         self.but.clicked.connect(lambda: self.display())
         self.bupdate.clicked.connect(lambda: self.update_db())
 
-    def display(self):
+    def display(self):  # Вывод результата
         try:
             res = self.convert(float(self.iz.text()), str(self.b.currentText()), str(self.b_2.currentText()))
             self.v.setText(str(res))
         except ValueError:
             self.iz.setText(str("Неверное число"))
 
-    def update_db(self):
+    def update_db(self):  # Обновляем значения в таблице
         if self.check_connection():
             data = requests.get(
                 'https://openexchangerates.org/api/latest.json?app_id=2db968ef5bca471f93c0c0e86217a9d5').json()
@@ -74,7 +74,7 @@ class App(QWidget, Ui_App):
             self.con.commit()
             self.bupdate.setText("Обновить Базу Данных")
 
-    def convert(self, value, from_, to):
+    def convert(self, value, from_, to):  # Конвертируем валюту
         data_from = self.cur.execute(f"""SELECT value_ FROM course WHERE iso_code = '{from_}'""").fetchall()
         data_from = data_from[0][0]
         data_to = self.cur.execute(f"""SELECT value_ FROM course WHERE iso_code = '{to}'""").fetchall()
