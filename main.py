@@ -72,7 +72,7 @@ class App(QWidget, Ui_App):
                 self.cur.execute(
                     f"""INSERT INTO course (iso_code,value_,update_) VALUES ('{iso_code}',{value},'{time}')""")
             self.con.commit()
-            self.set()
+            self.bupdate.setText("Обновить Базу Данных")
 
     def convert(self, value, from_, to):
         data_from = self.cur.execute(f"""SELECT value_ FROM course WHERE iso_code = '{from_}'""").fetchall()
